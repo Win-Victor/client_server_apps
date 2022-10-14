@@ -1,3 +1,5 @@
+import logging
+
 """Константы"""
 
 # Порт по умолчанию для сетевого взаимодействия
@@ -21,3 +23,6 @@ ACCOUNT_NAME = 'account_name'
 PRESENCE = 'presence'
 RESPONSE = 'response'
 ERROR = 'error'
+
+LOGGING_LEVEL = logging.DEBUG
+COMMON_FORMATTER = logging.Formatter("%(asctime)s - %(levelname) -8s - %(module)s - %(message)s")
