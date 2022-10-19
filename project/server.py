@@ -8,10 +8,13 @@ from project.common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECT
     PRESENCE, TIME, USER, ERROR, DEFAULT_PORT
 from project.common.utils import get_message, send_message
 import project.logs.server_log_config
+from project.decorator import log
 from project.errors import IncorrectDataRecivedError
 
 server_logger = logging.getLogger('server_log')
 
+
+@log
 def process_client_message(message):
     '''
     Обработчик сообщений от клиентов, принимает словарь -
@@ -33,6 +36,8 @@ def process_client_message(message):
         ERROR: 'Bad Request'
     }
 
+
+@log
 def create_arg_parser():
     """
     Парсер аргументов коммандной строки
@@ -65,6 +70,7 @@ def main():
                        f'Если адрес не указан, принимаются соединения с любых адресов.')
 
     transport = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    transport.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     transport.bind((listen_address, listen_port))
     transport.listen(MAX_CONNECTIONS)
 
@@ -74,6 +80,7 @@ def main():
         try:
             message_from_client = get_message(client)
             server_logger.debug(f'Получено сообщение {message_from_client}')
+            # print(message_from_client)
             response = process_client_message(message_from_client)
             server_logger.debug(f'Сформировано сообщение клиенту {response}')
             send_message(client, response)

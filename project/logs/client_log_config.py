@@ -7,13 +7,14 @@ from common.variables import ENCODING, LOGGING_LEVEL, COMMON_FORMATTER
 
 log = logging.getLogger('client_log')
 
-stream_hand = logging.StreamHandler(sys.stderr)
-stream_hand.setLevel(LOGGING_LEVEL)
-stream_hand.setFormatter(COMMON_FORMATTER)
-log.addHandler(stream_hand)
-
 PATH = os.path.dirname(os.path.abspath(__file__))
 PATH = os.path.join(PATH, 'client.log')
+
+stream_hand = logging.StreamHandler(sys.stderr)
+stream_hand.setFormatter(COMMON_FORMATTER)
+stream_hand.setLevel(logging.ERROR)
+log.addHandler(stream_hand)
+
 file_hand = logging.FileHandler(PATH, encoding=ENCODING)
 file_hand.setLevel(LOGGING_LEVEL)
 file_hand.setFormatter(COMMON_FORMATTER)

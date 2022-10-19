@@ -1,5 +1,6 @@
 """Ошибки"""
 
+
 class IncorrectDataRecivedError(Exception):
     """
     Исключение  - некорректные данные получены от сокета

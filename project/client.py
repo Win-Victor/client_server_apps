@@ -10,10 +10,12 @@ from project.common.utils import get_message, send_message
 import logging
 import project.logs.client_log_config
 from project.errors import ReqFieldMissingError
+from project.decorator import log
 
 client_logger = logging.getLogger('client_log')
 
 
+@log
 def create_presence(account_name='Guest'):
     """
     Функция генерирует запрос о присутствии клиента
@@ -31,6 +33,7 @@ def create_presence(account_name='Guest'):
     return out
 
 
+@log
 def process_ans(message):
     """
     Функция разбирает ответ сервера
@@ -44,6 +47,7 @@ def process_ans(message):
     raise ReqFieldMissingError(RESPONSE)
 
 
+@log
 def create_arg_parser():
     """
     Создаём парсер аргументов коммандной строки
