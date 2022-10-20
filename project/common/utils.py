@@ -1,9 +1,15 @@
 """Утилиты"""
 
+import sys
 import json
-from common.variables import MAX_PACKAGE_LENGTH, ENCODING
+from project.common.variables import MAX_PACKAGE_LENGTH, ENCODING
+
+sys.path.append('../')
+from decorator import log
+from errors import IncorrectDataRecivedError, NonDictInputError
 
 
+@log
 def get_message(client):
     """
     Утилита приёма и декодирования сообщения.
@@ -14,15 +20,14 @@ def get_message(client):
     encoded_response = client.recv(MAX_PACKAGE_LENGTH)
     if isinstance(encoded_response, bytes):
         json_response = encoded_response.decode(ENCODING)
-        if isinstance(json_response, str):
-            response = json.loads(json_response)
-            if isinstance(response, dict):
-                return response
-            raise ValueError
-        raise ValueError
-    raise ValueError
+        response = json.loads(json_response)
+        if isinstance(response, dict):
+            return response
+        raise IncorrectDataRecivedError
+    raise IncorrectDataRecivedError
 
 
+@log
 def send_message(sock, message):
     """
     Утилита кодирования и отправки сообщения:
