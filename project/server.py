@@ -4,12 +4,15 @@ import logging
 import socket
 import sys
 import json
-from project.common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTIONS, \
+import logs.server_log_config
+
+sys.path.append('../')
+from common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTIONS, \
     PRESENCE, TIME, USER, ERROR, DEFAULT_PORT
-from project.common.utils import get_message, send_message
-import project.logs.server_log_config
-from project.decorator import log
-from project.errors import IncorrectDataRecivedError
+from common.utils import get_message, send_message
+from decorator import log
+from errors import IncorrectDataRecivedError
+
 
 server_logger = logging.getLogger('server_log')
 

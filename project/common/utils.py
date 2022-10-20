@@ -3,6 +3,7 @@
 import sys
 import json
 from project.common.variables import MAX_PACKAGE_LENGTH, ENCODING
+
 sys.path.append('../')
 from decorator import log
 from errors import IncorrectDataRecivedError, NonDictInputError
