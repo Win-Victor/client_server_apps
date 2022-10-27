@@ -1,38 +1,35 @@
 """Программа-сервер"""
-import argparse
-import logging
+
 import socket
 import sys
+import argparse
+import logging
 import select
-import json
 import time
-
-import logs.server_log_config
-
-sys.path.append('../')
-from common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTIONS, \
-    PRESENCE, TIME, USER, ERROR, DEFAULT_PORT, MESSAGE, MESSAGE_TEXT, SENDER
+import logs.config_server_log
+from common.variables import DEFAULT_PORT, MAX_CONNECTIONS, ACTION, TIME, USER, \
+    ACCOUNT_NAME, SENDER, PRESENCE, RESPONSE, ERROR, MESSAGE, MESSAGE_TEXT
 from common.utils import get_message, send_message
-from decorator import log
-from errors import IncorrectDataRecivedError
+from decos import log
 
-
-server_logger = logging.getLogger('server_log')
+# Инициализация логирования сервера.
+LOGGER = logging.getLogger('server')
 
 
 @log
 def process_client_message(message, messages_list, client):
-    '''
-    Обработчик сообщений от клиентов, принимает словарь -
-    сообщение от клиента, проверяет корректность,
-    возвращает словарь-ответ для клиента
-
+    """
+    Обработчик сообщений от клиентов, принимает словарь - сообщение от клинта,
+    проверяет корректность, отправляет словарь-ответ для клиента с результатом приёма.
     :param message:
+    :param messages_list:
+    :param client:
     :return:
-    '''
-    server_logger.debug(f'Разбор сообщения от клиента : {message}')
-    if ACTION in message \
-            and message[ACTION] == PRESENCE \
+    """
+    LOGGER.debug(f'Разбор сообщения от клиента : {message}')
+    # Если это сообщение о присутствии, принимаем и отвечаем, если успех
+    if ACTION in message\
+            and message[ACTION] == PRESENCE\
             and TIME in message \
             and USER in message \
             and message[USER][ACCOUNT_NAME] == 'Guest':
@@ -54,9 +51,7 @@ def process_client_message(message, messages_list, client):
 
 @log
 def arg_parser():
-    """
-    Парсер аргументов коммандной строки
-    """
+    """Парсер аргументов коммандной строки"""
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', default=DEFAULT_PORT, type=int, nargs='?')
     parser.add_argument('-a', default='', nargs='?')
@@ -66,7 +61,7 @@ def arg_parser():
 
     # проверка получения корретного номера порта для работы сервера.
     if not 1023 < listen_port < 65536:
-        server_logger.critical(
+        LOGGER.critical(
             f'Попытка запуска сервера с указанием неподходящего порта '
             f'{listen_port}. Допустимы адреса с 1024 до 65535.')
         sys.exit(1)
@@ -78,7 +73,7 @@ def main():
     """Загрузка параметров командной строки, если нет параметров, то задаём значения по умоланию"""
     listen_address, listen_port = arg_parser()
 
-    server_logger.info(
+    LOGGER.info(
         f'Запущен сервер, порт для подключений: {listen_port}, '
         f'адрес с которого принимаются подключения: {listen_address}. '
         f'Если адрес не указан, принимаются соединения с любых адресов.')
@@ -100,10 +95,10 @@ def main():
         try:
             client, client_address = transport.accept()
         except OSError as err:
-            print(err.errno)  # The error number returns None because it's just a timeout
+            print(err.errno)  # The error number returns None because it's just a timeout 
             pass
         else:
-            server_logger.info(f'Установлено соедение с ПК {client_address}')
+            LOGGER.info(f'Установлено соедение с ПК {client_address}')
             clients.append(client)
 
         recv_data_lst = []
@@ -124,7 +119,7 @@ def main():
                     process_client_message(get_message(client_with_message),
                                            messages, client_with_message)
                 except:
-                    server_logger.info(f'Клиент {client_with_message.getpeername()} '
+                    LOGGER.info(f'Клиент {client_with_message.getpeername()} '
                                 f'отключился от сервера.')
                     clients.remove(client_with_message)
 
@@ -141,7 +136,7 @@ def main():
                 try:
                     send_message(waiting_client, message)
                 except:
-                    server_logger.info(f'Клиент {waiting_client.getpeername()} отключился от сервера.')
+                    LOGGER.info(f'Клиент {waiting_client.getpeername()} отключился от сервера.')
                     waiting_client.close()
                     clients.remove(waiting_client)
 

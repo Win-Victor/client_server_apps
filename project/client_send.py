@@ -6,15 +6,15 @@ import socket
 import time
 import argparse
 import logging
-import logs.client_log_config
+import logs.config_client_log
 from common.variables import DEFAULT_PORT, DEFAULT_IP_ADDRESS, \
     ACTION, TIME, USER, ACCOUNT_NAME, SENDER, PRESENCE, RESPONSE, ERROR, MESSAGE, MESSAGE_TEXT
 from common.utils import get_message, send_message
 from errors import ReqFieldMissingError, ServerError
-from decorator import log
+from decos import log
 
 # Инициализация клиентского логера
-LOGGER = logging.getLogger('client_log')
+LOGGER = logging.getLogger('client')
 
 
 @log

@@ -1,22 +1,21 @@
 """Утилиты"""
 
-import sys
 import json
-from project.common.variables import MAX_PACKAGE_LENGTH, ENCODING
-
+import sys
 sys.path.append('../')
-from decorator import log
+from common.variables import MAX_PACKAGE_LENGTH, ENCODING
 from errors import IncorrectDataRecivedError, NonDictInputError
+from decos import log
 
 
 @log
 def get_message(client):
     """
-    Утилита приёма и декодирования сообщения.
-    Принимает байты, выдаёт словарь, если принято что-то
-    другое возвращает ValueError (ошибку значения)
+    Утилита приёма и декодирования сообщения принимает байты выдаёт словарь,
+    если приняточто-то другое отдаёт ошибку значения
+    :param client:
+    :return:
     """
-
     encoded_response = client.recv(MAX_PACKAGE_LENGTH)
     if isinstance(encoded_response, bytes):
         json_response = encoded_response.decode(ENCODING)
@@ -30,12 +29,14 @@ def get_message(client):
 @log
 def send_message(sock, message):
     """
-    Утилита кодирования и отправки сообщения:
-    принимает для отправки словарь, получает из него строку,
-    далее превращает строку в байты и отправляет.
+    Утилита кодирования и отправки сообщения
+    принимает словарь и отправляет его
+    :param sock:
+    :param message:
+    :return:
     """
     if not isinstance(message, dict):
-        raise TypeError
+        raise NonDictInputError
     js_message = json.dumps(message)
     encoded_message = js_message.encode(ENCODING)
     sock.send(encoded_message)
