@@ -3,11 +3,9 @@
 import sys
 import os
 import unittest
-
 sys.path.append(os.path.join(os.getcwd(), '..'))
-from lesson_7.practice.common.variables import RESPONSE, ERROR, USER, ACCOUNT_NAME, TIME, ACTION, PRESENCE
-from lesson_7.practice.server import process_client_message
-
+from common.variables import RESPONSE, ERROR, USER, ACCOUNT_NAME, TIME, ACTION, PRESENCE
+from server import process_client_message
 
 class TestServer(unittest.TestCase):
     '''
